@@ -1,0 +1,4 @@
+cat d=3 a=1.378404875209022  meter=p  N=48  gamma=0.05
+  Weyl-Z (adjoint-normalized, C0=1.0103):  t=0.5: 8.093e-03  t=1.0: 7.898e-03  t=2.0: 7.570e-03  t=4.0: 7.079e-03
+  -> windowed Gamma_self = 7.898e-03
+  pair (0,1) Pi_i-Pi_j: 7.220e-03  7.140e-03  6.996e-03  6.746e-03  -> 7.140e-03

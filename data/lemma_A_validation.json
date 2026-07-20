@@ -1,0 +1,61 @@
+{
+  "checks": [
+    {
+      "name": "within-code slope (kappa=0.3, dm=0.0)",
+      "measured": 0.008999999998048293,
+      "predicted": 0.009,
+      "rel": 2.1685623975543758e-10,
+      "ok": true
+    },
+    {
+      "name": "within-code slope (kappa=0.3, dm=0.8)",
+      "measured": 0.008997840117749591,
+      "predicted": 0.009,
+      "rel": 0.00023998691671199866,
+      "ok": true
+    },
+    {
+      "name": "flux identity [confusion s=0.6]",
+      "measured": 0.0017633543804631468,
+      "predicted": 0.00162,
+      "rel": 0.08849035831058454,
+      "ok": true
+    },
+    {
+      "name": "which-path suppressed",
+      "measured": 0.00020223316613895298,
+      "leak_scale": 0.006124999999999999,
+      "ratio_gamma_over_g": 0.8089326645558119,
+      "ok": true
+    }
+  ],
+  "g_sweep": {
+    "g": [
+      5.0,
+      20.0,
+      100.0,
+      500.0,
+      2000.0
+    ],
+    "dev": [
+      0.006485215705088465,
+      0.011744678651853484,
+      0.013150064207392705,
+      0.013431284977296207,
+      0.013484019911630668
+    ],
+    "bounded": true,
+    "converges": true,
+    "additive_prediction": 0.01062
+  },
+  "block_bounds": {
+    "sup_p": 0.0014241180894111654,
+    "bound_p": 0.00216,
+    "sup_q": 0.0035596878279704532,
+    "bound_q": 0.01388119492713959
+  },
+  "C_beta": {
+    "corrected_at_1": 89,
+    "old_at_1": 89
+  }
+}
