@@ -1,0 +1,9 @@
+GKP d=3 N=90 kernel_ok=True
+GKP d=3  meter=mod-q  N=90  gamma=0.05
+  Weyl-Z (adjoint-normalized, C0=1.0000):  t=0.5: 3.259e-03  t=1.0: 3.151e-03  t=2.0: 3.121e-03  t=4.0: 3.092e-03
+  -> windowed Gamma_self = 3.151e-03
+  pair (0,1) Pi_i-Pi_j: 2.813e-03  2.718e-03  2.684e-03  2.658e-03  -> 2.718e-03
+  pair (0,2) Pi_i-Pi_j: 2.761e-03  2.670e-03  2.638e-03  2.615e-03  -> 2.670e-03
+  pair (1,2) Pi_i-Pi_j: 4.202e-03  4.065e-03  4.042e-03  4.004e-03  -> 4.065e-03
+  -> worst-pair Gamma_self = 4.065e-03  (pair (1, 2))
+  PAPER (spectral triple-run): 2.1e-03   deviation: Weyl +50.1%  worst-pair +93.6%

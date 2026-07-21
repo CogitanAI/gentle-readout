@@ -1,0 +1,11 @@
+cat d=4 a=1.378404875209022  meter=q  N=56  gamma=0.05
+  Weyl-Z (adjoint-normalized, C0=1.0556):  t=0.5: 2.022e-02  t=1.0: 1.937e-02  t=2.0: 1.791e-02  t=4.0: 1.566e-02
+  -> windowed Gamma_self = 1.937e-02
+  pair (0,1) Pi_i-Pi_j: 1.912e-02  1.866e-02  1.780e-02  1.633e-02  -> 1.866e-02
+  pair (0,2) Pi_i-Pi_j: 1.534e-02  1.501e-02  1.443e-02  1.353e-02  -> 1.501e-02
+  pair (0,3) Pi_i-Pi_j: 2.262e-02  2.187e-02  2.050e-02  1.823e-02  -> 2.187e-02
+  pair (1,2) Pi_i-Pi_j: 2.155e-02  2.087e-02  1.966e-02  1.769e-02  -> 2.087e-02
+  pair (1,3) Pi_i-Pi_j: 2.047e-02  1.962e-02  1.810e-02  1.563e-02  -> 1.962e-02
+  pair (2,3) Pi_i-Pi_j: 2.511e-02  2.420e-02  2.255e-02  1.981e-02  -> 2.420e-02
+  -> worst-pair Gamma_self = 2.420e-02  (pair (2, 3))
+  PAPER (spectral triple-run): 1.3e-02   deviation: Weyl +49.0%  worst-pair +86.2%

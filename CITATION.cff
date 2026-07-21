@@ -8,6 +8,7 @@ authors:
     affiliation: "Cogitan"
 license: MIT
 repository-code: "https://github.com/CogitanAI/gentle-readout"
+doi: "10.5281/zenodo.21464328"
 date-released: "2026-07-20"
 version: "1.0.0"
 keywords:
