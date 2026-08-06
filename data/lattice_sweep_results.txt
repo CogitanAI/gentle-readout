@@ -1,0 +1,74 @@
+ROUND 10 STAGE A — GKP lattice perception frontier   d=2  N=84  eps=0.22
+Regenerated 2026-07-25.  Reproduces the Sec. V trade-off numbers and the
+lattice curve of Fig. 1(b).
+
+PROVENANCE NOTE — READ BEFORE REPRODUCING
+-----------------------------------------
+`round10_stageA.py` sweeps R_GRID = (0.75, 0.85, 1.0, 1.18, 1.35) in one
+process.  On the reference machine that run completes the first three points
+and then dies inside SuperLU's allocator on the fourth factorization:
+
+    RuntimeError: SUPERLU_MALLOC fails for buf in intCalloc()
+    at line 173 in file .../SuperLU/SRC/memory.c
+
+This is a genuine memory limit, not a numerical failure.  r > 1 squeezes the
+q-quadrature into tighter combs, so the codewords need more Fock space; at
+fixed N = 84 the sparse shift-invert (`eigs(..., sigma=-1e-9)` -> `splu`) in
+`perception_step3.induced_rates` exceeds what SuperLU can allocate once three
+prior factorizations have fragmented the heap.  Each process holds ~2 GB.
+
+The r > 1 points DO complete in a fresh process.  They were obtained with
+`one_r.py <r>`, which imports `round10_stageA` and calls `score(N, D, r)`
+unchanged — same constants, same code path, no numerical modification.  Only
+the heap differs.
+
+A reproducer with more memory should get all five from the single sweep.  If
+the sweep dies at r = 1.18, run the last two points individually.
+
+COMBINED RESULT (all five points)
+---------------------------------
+     r   n_bar   ker_d-1     gap  P_prot   P_perc     via      worst
+  0.75    2.12   1.9e-07     3.0    1.36   788.76   mod-q   4.34e-02
+  0.85    1.93   4.1e-08     3.2    1.50   276.87   mod-q   3.16e-02
+  1.00    1.85   3.8e-09     3.3    1.67    92.64   mod-q   2.15e-02  <-- square baseline
+  1.18    1.94   5.0e-08     3.2    1.50    40.06   mod-q   3.18e-02
+  1.35    2.15   2.1e-07     3.0    1.35    24.03   mod-q   4.48e-02
+
+Rows r <= 1.00 are from the sequential `round10_stageA.py` run (verbatim
+below).  Rows r = 1.18 and r = 1.35 are from single-point runs (verbatim
+below).
+
+Pareto reading: r = 1.00 carries the highest protection (1.67), so nothing
+dominates it.  r = 1.18 sits at the same protection as r = 0.85 (1.50) with
+P_perc 40.06 against 276.87 — the r > 1 branch is dominated, and the square
+lattice is Pareto-optimal in the rectangular family.
+
+--- verbatim: round10_stageA.py, sequential, exit 1 -------------------------
+ROUND 10 STAGE A — GKP lattice perception frontier  d=2 N=84 eps=0.22
+
+     r   n_bar   ker_d-1     gap  P_prot   P_perc     via      worst
+  0.75    2.12   1.9e-07     3.0    1.36   788.76   mod-q   4.34e-02
+  0.85    1.93   4.1e-08     3.2    1.50   276.87   mod-q   3.16e-02
+  1.00    1.85   3.8e-09     3.3    1.67    92.64   mod-q   2.15e-02  <-- square baseline
+Traceback (most recent call last):
+  File ".../code_release/round10_stageA.py", line 185, in <module>
+    main()
+  File ".../code_release/round10_stageA.py", line 155, in main
+    out, nb, k0, k1, res = score(N, D, r)
+  File ".../code_release/round10_stageA.py", line 127, in score
+    wprot, _ = _worst(stab + [np.sqrt(K1) * a, np.sqrt(KPHI) * n], [XL, ZL])
+  File ".../code_release/round10_stageA.py", line 143, in _worst
+    rates = induced_rates(c_ops, logops, rate_ceiling=0.5)
+  File ".../code_release/perception_step3.py", line 47, in induced_rates
+    vals, vecs = eigs(Ls, k=k, sigma=-1e-9, which="LM", ...)
+  [scipy arpack -> get_OPinv_matvec -> SpLuInv -> splu -> _superlu.gstrf]
+RuntimeError: SUPERLU_MALLOC fails for buf in intCalloc() at line 173 in file
+../scipy/sparse/linalg/_dsolve/SuperLU/SRC/memory.c
+
+--- verbatim: one_r.py 1.18, exit 0 -----------------------------------------
+single-point run: r=1.18  N=84 D=2 eps=0.22
+  1.18    1.94   5.0e-08     3.2    1.50    40.06   mod-q   3.18e-02
+
+--- verbatim: one_r.py 1.35, exit 0 -----------------------------------------
+single-point run: r=1.35  N=84 D=2 eps=0.22
+  1.35    2.15   2.1e-07     3.0    1.35    24.03   mod-q   4.48e-02

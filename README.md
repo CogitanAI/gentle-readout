@@ -21,9 +21,16 @@ qudlab/codes.py              cat / GKP / number codeword & projector constructio
 qudlab/loss_correction.py    logical-rate ("protection") scoring
 gkp_qudit2.py                finite-energy GKP codewords and jump operators
 perception_frontier.py       the signal (S) and disturbance functionals; code+meter builders
-perception_step3.py          spectral rate extraction
+perception_step3.py          spectral rate extraction; produces the self/conjugate
+                             split, i.e. the Gamma_conj column of Table I
 perception_ruler.py          functional validation (standalone)
 autocorr_extract_d3fix.py    windowed-autocorrelation self-rate extraction (Tables I/II, incl. d>2)
+round10_stageA.py            GKP rectangular-lattice aspect sweep r in {0.75, 0.85, 1.0,
+                             1.18, 1.35} -> the readability/protection trade-off curve of
+                             Sec. V and the lattice curve in Fig. 1b
+one_r.py                     runs a single aspect ratio of round10_stageA in a fresh
+                             process (needed for r > 1 on memory-limited machines;
+                             see the note under Reproduce)
 round10_stageB.py            the 48 generalized-number-code search (Fig. 1b cloud)
 nogo_sweep.py                meter-menu self-reporting search + exponential-floor fits (Sec. VI)
 proof_gkp.py                 analytic GKP tuned-zero lemma: closed-form checks to machine precision
@@ -43,6 +50,22 @@ python nogo_sweep.py                # menu no-go sweep + floor fits -> data/nogo
 python autocorr_extract_d3fix.py cat3        # cat d=3  (Table I)
 python autocorr_extract_d3fix.py cat4        # cat d=4  (Table I)
 python autocorr_extract_d3fix.py gkp3 90     # GKP d=3 at Fock cutoff N=90 (Table I)
+
+# Conjugate rates -- the Gamma_conj column of Table I, all rows:
+python perception_step3.py       > data/conjugate_rates.txt
+
+# GKP lattice aspect sweep -- Sec. V trade-off curve and the Fig. 1b lattice line:
+python -u round10_stageA.py      > data/lattice_sweep_results.txt
+
+# If that sweep dies at r = 1.18 with
+#   RuntimeError: SUPERLU_MALLOC fails for buf in intCalloc()
+# it is out of memory, not wrong. r > 1 squeezes the q-quadrature into tighter
+# combs, so at fixed N = 84 the sparse shift-invert needs more than SuperLU can
+# allocate once earlier factorizations have fragmented the heap (~2 GB/process).
+# The remaining points complete in fresh processes, same code path, same
+# constants:
+python -u one_r.py 1.18
+python -u one_r.py 1.35
 
 # The figure:
 python fig1.py                      # -> readability_fig1.pdf

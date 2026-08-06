@@ -1,0 +1,63 @@
+FAIR PERCEPTION PROBE  target n_bar=1.9  gamma=0.05
+
+=== cat d=2 a=1.378404875209022  (d=2, N=40)  n_bar=1.90  [cond ov=6.4e-17 res=1.4e-15] ===
+     obs    Perc_Z    Perc_X    self_Z    conj_X   P_QND_Z   note
+       n  1.45e-05  2.89e-02  4.79e-03  0.00e+00  1.51e-04   
+       q  1.52e+01  2.24e-64  1.09e-03  4.10e-01  7.00e+02   
+       p  0.00e+00  2.98e-35  1.52e-03  4.96e-02  0.00e+00   
+  parity  2.00e-03  4.00e+00  1.00e-01  0.00e+00  1.00e-03   
+   mod-q  7.94e-07  1.59e-03  1.69e-03  0.00e+00  2.36e-05   
+   mod-p  4.60e-05  9.18e-02  9.46e-03  0.00e+00  2.43e-04   
+env:loss         -         -  5.10e-05  7.56e-02
+env:deph         -         -  1.79e-03  0.00e+00
+  --> best read-Z: q P_QND=7.00e+02 (self_Z=1.09e-03 > 0 -> not QND)
+
+=== cat d=3 a=1.378404875209022  (d=3, N=48)  n_bar=1.92  [cond ov=1.2e-16 res=3.4e-15] ===
+     obs    Perc_Z    Perc_X    self_Z    conj_X   P_QND_Z   note
+       n  2.38e-03  7.22e-01  1.79e-02  0.00e+00  6.63e-03   
+       q  1.71e+01  1.11e-30  7.02e-03  2.50e-01  1.22e+02   
+       p  1.71e+01  9.63e-32  6.38e-03  1.08e-01  1.34e+02   
+  parity  1.20e-02  2.80e+00  9.42e-02  0.00e+00  6.36e-03   
+   mod-q  8.38e-01  2.05e-01  1.10e-02  2.81e-02  3.82e+00   
+   mod-p  2.23e+00  2.07e-01  7.64e-03  3.85e-02  1.46e+01   
+env:loss         -         -  3.02e-04  5.75e-02
+env:deph         -         -  7.15e-03  0.00e+00
+  --> best read-Z: p P_QND=1.34e+02 (self_Z=6.38e-03 > 0 -> not QND)
+
+=== cat d=4 a=1.378404875209022  (d=4, N=56)  n_bar=2.01  [cond ov=3.1e-16 res=3.2e-15] ===
+     obs    Perc_Z    Perc_X    self_Z    conj_X   P_QND_Z   note
+       n  1.09e-01  7.37e+00  2.49e-02  0.00e+00  2.20e-01   
+       q  3.04e+01  3.69e-32  1.30e-02  1.27e-01  1.17e+02   
+       p  3.04e+01  8.39e-32  1.30e-02  1.27e-01  1.17e+02   
+  parity  3.30e-02  1.60e+01  1.00e-01  0.00e+00  1.65e-02   
+   mod-q  5.45e+00  1.06e+00  4.63e-03  4.43e-02  5.89e+01   
+   mod-p  5.90e+00  1.06e+00  4.63e-03  4.43e-02  6.37e+01   
+env:loss         -         -  1.04e-03  3.97e-02
+env:deph         -         -  9.68e-03  0.00e+00
+  --> best read-Z: q P_QND=1.17e+02 (self_Z=1.30e-02 > 0 -> not QND)
+
+=== GKP d=2  (d=2, N=80)  n_bar=1.85  [cond ov=1.2e-17 res=4.6e-05] ===
+     obs    Perc_Z    Perc_X    self_Z    conj_X   P_QND_Z   note
+       n  8.05e-01  6.54e-01  9.50e-02  1.21e-01  4.24e-01   
+       q  1.05e-20  7.74e-21  3.12e-03  5.02e-02  1.67e-19   
+       p  0.00e+00  3.99e-54  5.02e-02  3.12e-03  0.00e+00   
+  parity  4.93e-32  1.97e-31  1.33e-08  1.36e-08  1.85e-25   
+   mod-q  2.84e+00  7.93e-03  1.53e-03  7.51e-02  9.26e+01   
+   mod-p  7.35e-03  2.84e+00  7.51e-02  1.53e-03  4.90e-03   
+env:loss         -         -  7.84e-03  9.29e-03
+env:deph         -         -  3.93e-02  4.85e-02
+  --> best read-Z: mod-q P_QND=9.26e+01 (self_Z=1.53e-03 > 0 -> not QND)
+
+=== GKP d=3  (d=3, N=90)  n_bar=1.97  [cond ov=2.7e-17 res=3.7e-05] ===
+     obs    Perc_Z    Perc_X    self_Z    conj_X   P_QND_Z   note
+       n  4.21e+00  2.84e+00  1.11e-01  1.11e-01  1.89e+00   
+       q  1.81e+00  3.71e-03  6.19e-03  6.78e-02  1.46e+01   
+       p  0.00e+00  1.84e+00  7.13e-02  7.84e-03  0.00e+00   
+  parity  2.03e+00  1.99e+00  1.00e-01  1.00e-01  1.02e+00   
+   mod-q  3.51e+00  2.88e-02  2.12e-03  4.65e-02  8.25e+01   
+   mod-p  3.24e-02  3.44e+00  5.11e-02  3.97e-03  3.17e-02   
+env:loss         -         -  1.15e-02  1.63e-02
+env:deph         -         -  4.63e-02  5.89e-02
+  --> best read-Z: mod-q P_QND=8.25e+01 (self_Z=2.12e-03 > 0 -> not QND)
+
+Reading: a 'QND read-Z' observable (Perc_Z>0, self_Z~0) = readout that sees the logical WITHOUT corrupting it — the real 'readable-while-protected'. Claim confirmed if GKP has one via mod-q/mod-p and the matched-n_bar cats do NOT.
