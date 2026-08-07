@@ -42,9 +42,15 @@ data/                        saved outputs (JSON) — regenerate with the comman
 ## Reproduce
 ```
 # Analytic-lemma checks (fast, no eigensolve):
-python proof_gkp.py                 # GKP tuned-zero: C(Δ), Δm, κ, Λ01 closed forms vs numerics
-python lemma_A_validation.py        # Assumption-A remainder O(1/g), flux identity, g-sweep
-python nogo_sweep.py                # menu no-go sweep + floor fits -> data/nogo_results.json
+python proof_gkp.py                        # GKP tuned-zero: C(Δ), Δm, κ, Λ01 closed forms vs numerics
+                                           #   writes proof_gkp_results.json in the CURRENT directory;
+                                           #   compare against data/proof_gkp_results.json
+python lemma_A_validation.py               # Assumption-A remainder O(1/g), flux identity, g-sweep
+                                           #   writes data/lemma_A_validation.json
+python nogo_sweep.py data/nogo_results.json   # menu no-go sweep + floor fits (Sec. VI)
+                                           #   the output path is the first argument; with no
+                                           #   argument it writes nogo_results.json in the
+                                           #   current directory instead
 
 # Atlas self-rates (dense Liouvillian eigensolves; minutes per cell):
 python autocorr_extract_d3fix.py cat3        # cat d=3  (Table I)
@@ -71,9 +77,29 @@ python -u one_r.py 1.35
 python fig1.py                      # -> readability_fig1.pdf
 ```
 
+## Reproduction status
+
+Re-run from a clean clone on 2026-08-06 with Python 3.13, numpy 2.2.6,
+scipy 1.17.1, qutip 5.3.0. Three scripts reproduce the shipped outputs
+**bit-for-bit** — every numeric field identical, worst relative difference
+exactly zero:
+
+| script | fields compared | result |
+|---|---|---|
+| `proof_gkp.py` | 152 | identical |
+| `lemma_A_validation.py` | 39 | identical (4/4 checks pass) |
+| `nogo_sweep.py` | 613 | identical |
+
+The dense-eigensolve paths (`autocorr_extract_d3fix.py`, `perception_step3.py`,
+`round10_stageA.py`, `round10_stageB.py`) were not re-run in that pass; they take
+minutes to hours per cell and `round10_stageA.py` has the memory caveat noted
+above.
+
 ## Notes
 - `qutip==5.3.0` is the version used for the paper; other 5.x releases should work
-  but were not validated.
+  but were not validated. The bit-identical re-run above used numpy 2.2.6 and
+  scipy 1.17.1 — well above the floors in `requirements.txt` — so the results are
+  not sensitive to the exact numpy/scipy versions.
 - The `paper (spectral triple-run)` reference values printed by
   `autocorr_extract_d3fix.py` are the *superseded* spectral estimates; the paper
   quotes the windowed-autocorrelation values this script computes (they differ by
