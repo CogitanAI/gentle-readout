@@ -24,6 +24,7 @@ New file only -- existing sources untouched. Usage:
   python -u autocorr_extract_d3fix.py cat3      # cat d=3 via p   (paper 6.4e-3)
   python -u autocorr_extract_d3fix.py cat4      # cat d=4 via q   (paper 1.3e-2)
   python -u autocorr_extract_d3fix.py cat4lo    # cat d=4 at reduced cutoff (convergence)
+  python -u autocorr_extract_d3fix.py table2    # all 12 Table II cells
   python -u autocorr_extract_d3fix.py gkp3 [N]  # GKP d=3 via mod-q (paper 2.1e-3)
 """
 import sys
@@ -54,7 +55,18 @@ def autocorr_rates_fixed(c_ops, O, Pcode, d):
     for t in TSTARS:
         e = np.exp(vals * t)
         slope = -complex(np.sum(w * vals * e))
-        out.append(float(np.real(slope / C0)) if abs(C0) > 1e-12
+        # BUG FIX 2026-08-20: normalize by C(t), not C(0). Gamma_self is the
+        # LOGARITHMIC derivative -d/dt ln C(t) = -Cdot(t)/C(t); dividing by C0
+        # returns the raw derivative -Cdot(t), which is low by exp(-Gamma t).
+        # Negligible where Gamma*t << 1, but 9.5% at cat/parity (Gamma = 0.0999,
+        # t = 1), where it drove the measured rate BELOW the bound (0.0904 vs
+        # 0.0999) and made the paper's saturation cell look like a violation.
+        # Verified against the closed form of Eq. (eq:exactrate): with n_z ~ 0
+        # the log-derivative is flat at 2*gamma*kappa^2 across the whole window,
+        # while the old expression tracked 2*gamma*kappa^2*exp(-2 g kappa^2 t)
+        # to four decimals at every t.
+        Ct = complex(np.sum(w * e))
+        out.append(float(np.real(slope / Ct)) if abs(Ct) > 1e-12
                    else float("nan"))
     return out, abs(C0)
 
@@ -108,6 +120,52 @@ def run_cell(code, meter, paper_val):
     return gs, worst[1]
 
 
+TABLE2_PRINTED = {
+    ("cat", "parity"): 1.0e-1, ("cat", "mod-q"): 1.7e-3, ("cat", "mod-p"): 9.4e-3,
+    ("cat", "q"): 1.2e-3, ("cat", "p"): 1.5e-3, ("cat", "n"): 4.8e-3,
+    ("GKP", "parity"): 1.4e-8, ("GKP", "mod-q"): 1.7e-3, ("GKP", "mod-p"): 7.4e-2,
+    ("GKP", "q"): 3.1e-3, ("GKP", "p"): 5.0e-2, ("GKP", "n"): 1.1e-1}
+# GKP-p and GKP-n updated 2026-08-20 from 4.7e-2 and 9.5e-2. Those were the
+# pre-fix windowed values: only four cells are fast enough for the C(0)-vs-C(t)
+# bug to bite (Gamma*t > 0.05), and of those, cat/parity and GKP/mod-p had been
+# computed by an independent route while these two had not. The manuscript
+# carries the corrected values; this dict tracks the manuscript.
+
+
+def table2():
+    """Regenerate all twelve d=2 (code, meter) cells of Table II (tab:bound).
+
+    Each row is checked against the printed value as it is produced. Note that
+    code["logops"] is [X, Y, Z] for cats but [X, Z, X*Z] for GKP, so the index of
+    the logical Z is carried per code rather than inferred from len(logops).
+    """
+    from perception_frontier import cat_code, gkp_code
+    codes = [("cat", cat_code(np.sqrt(1.9), 2), 2), ("GKP", gkp_code(2, 80), 1)]
+    meters = ["parity", "mod-q", "mod-p", "q", "p", "n"]
+    print(f"TABLE II -- twelve d=2 cells, gamma={GAMMA}", flush=True)
+    print(f"{'code':<5s}{'meter':>8s}{'Gamma_self':>13s}{'printed':>11s}"
+          f"{'ratio':>8s}{'flag':>11s}", flush=True)
+    worst = 0.0
+    for short, code, zli in codes:
+        N, ZL = code["N"], code["logops"][zli]
+        obs, _ = observables(N, 2)
+        for meter in meters:
+            c_ops = code["stab"] + [np.sqrt(GAMMA) * obs[meter]]
+            g, _ = autocorr_rates_fixed(c_ops, ZL, code["Pcode"], 2)
+            s, flag = stable(g)
+            pr = TABLE2_PRINTED[(short, meter)]
+            print(f"{short:<5s}{meter:>8s}{s:>13.4e}{pr:>11.1e}{s/pr:>7.2f}x"
+                  f"{(flag.strip() or '-'):>11s}", flush=True)
+            worst = max(worst, abs(s / pr - 1))
+    print("")
+    print(f"largest deviation from the printed table: {100*worst:.0f}%",
+          flush=True)
+    print("Expect all twelve within roughly 6% of the printed values. GKP-q is "
+          "the softest: its windows are still falling at t=4, so stable() "
+          "returns the last one; the printed 3.1e-3 agrees with the spectral "
+          "value to 0.7%.", flush=True)
+
+
 def main():
     mode = sys.argv[1] if len(sys.argv) > 1 else "diag"
     if mode == "diag":
@@ -139,6 +197,8 @@ def main():
                 "logops": [W["X"], W["Z"]],
                 "Pcode": code_projector(Nlo, al, 4)}
         run_cell(code, "q", 1.3e-2)
+    elif mode == "table2":
+        table2()
     elif mode == "gkp3":
         N = int(sys.argv[2]) if len(sys.argv) > 2 else 90
         g = gkp_code(3, N)

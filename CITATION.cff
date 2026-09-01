@@ -9,8 +9,8 @@ authors:
 license: MIT
 repository-code: "https://github.com/CogitanAI/gentle-readout"
 doi: "10.5281/zenodo.21464317"
-date-released: "2026-08-06"
-version: "1.1"
+date-released: "2026-09-01"
+version: "1.2"
 keywords:
   - quantum error correction
   - bosonic codes

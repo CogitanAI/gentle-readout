@@ -35,6 +35,9 @@ round10_stageB.py            the 48 generalized-number-code search (Fig. 1b clou
 nogo_sweep.py                meter-menu self-reporting search + exponential-floor fits (Sec. VI)
 proof_gkp.py                 analytic GKP tuned-zero lemma: closed-form checks to machine precision
 lemma_A_validation.py        dense 4-level model: Assumption-A remainder + flux-identity checks (App. C/D)
+gamma_sweep.py               sweeps gamma over 256x to test whether the residual
+                             looseness is perturbative (Sec. IV); writes
+                             gamma_sweep_results.json
 fig1.py                      renders Figure 1 from the tabulated values
 data/                        saved outputs (JSON) — regenerate with the commands below
 ```
@@ -51,6 +54,15 @@ python nogo_sweep.py data/nogo_results.json   # menu no-go sweep + floor fits (S
                                            #   the output path is the first argument; with no
                                            #   argument it writes nogo_results.json in the
                                            #   current directory instead
+
+# Table II (tab:bound): all twelve d=2 (code, meter) cells, each checked against
+# the printed value as it is produced. ~20 min (dense, N=80 for the GKP rows):
+python -u autocorr_extract_d3fix.py table2   > data/table2_cells.txt
+
+# The gamma sweep behind Sec. IV: twelve cells x five gammas, 5e-2 down to
+# 1.95e-4. Hours, dense. Writes gamma_sweep_results.json in the current dir;
+# the shipped copy is data/gamma_sweep_results.json:
+python -u gamma_sweep.py
 
 # Atlas self-rates (dense Liouvillian eigensolves; minutes per cell):
 python autocorr_extract_d3fix.py cat3        # cat d=3  (Table I)
@@ -117,3 +129,38 @@ above.
 
 ## License
 MIT (see LICENSE).
+
+## Corrections
+
+- **Normalization fix, 2026-08-20.** `autocorr_rates_fixed` previously divided
+  the windowed slope by `C(0)` rather than `C(t)`, returning the raw derivative
+  instead of the logarithmic derivative that `Gamma_self` is defined as. The
+  result ran low by `exp(-Gamma t)`: negligible wherever `Gamma*t << 1`, but
+  9.5% at cat/parity, where it put the measured rate (0.0904) *below* the bound
+  (0.0999) and made the paper's saturation cell look like a violation. Verified
+  against the closed form of Eq. (A2): with `n_z ~ 0` the log-derivative must be
+  flat at `2*gamma*kappa^2` across the window, and after the fix it is
+  (9.99474e-2 -> 9.99254e-2 over t = 0.5..4, against an identity value of
+  9.9940e-2), where before it fell 9.512e-2 -> 6.703e-2. **If you are comparing
+  against results generated before this date, the fast cells moved.**
+
+- **Two Table II values moved with it.** Only four cells are fast enough for the
+  bug to bite (`Gamma*t > 0.05`). Of those, cat/parity and GKP/mod-p had been
+  computed by an independent route and were already right; GKP-p and GKP-n had
+  not. They were corrected in the manuscript from `4.7e-2` to `5.0e-2` and from
+  `9.5e-2` to `1.1e-1`. Both *raise* the measured rate, so both relax the bound
+  rather than threaten it. `TABLE2_PRINTED` here tracks the corrected values.
+
+- **`data/gamma_sweep_results.json` predates that correction.** It is the
+  genuine 2026-08-19 run and is shipped unedited. Its measured fields (`R`,
+  `eta`, rates) are unaffected, but the `published` reference field on the two
+  anchor rows still carries `0.047` and `0.095`. `gamma_sweep.py` itself has
+  been updated, so a re-run reports against the corrected values.
+
+- **GKP-q is the softest number in Table II.** Its windows are still falling at
+  `t = 4`, so `stable()` returns the last one. The printed `3.1e-3` agrees with
+  the spectral value to 0.7%, and the "loose by 316x" claim rests on it.
+
+- **`code["logops"]` is ordered `[X, Y, Z]` for the cat codes but `[X, Z, X*Z]`
+  for GKP**, so an index rule inferred from `len(logops)` silently reads the
+  wrong logical operator for one of them. Carry the index per code.
