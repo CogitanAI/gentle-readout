@@ -39,6 +39,17 @@ gamma_sweep.py               sweeps gamma over 256x to test whether the residual
                              looseness is perturbative (Sec. IV); writes
                              gamma_sweep_results.json
 fig1.py                      renders Figure 1 from the tabulated values
+e1_flux_decomposition.py     (v1.3) flux-identity prediction of every Table III cell from
+                             the stabilizer's own cascaded return channel; recovery
+                             shortfall and chain loss (Table II, Sec. III.A)
+e1c_leff.py                  (v1.3) exact 4x4 leading-order generator L_eff; its slow
+                             mode vs the full-Liouvillian spectral rate (Sec. III.A)
+e2_gkpq_convergence.py       (v1.3) GKP-q self-rate converged in Fock cutoff N=80..110
+e3_block_identities.py       (v1.3) machine check of the block identities, drain identity
+                             and exact trace preservation of R used in Supplement S1-S5
+verify_nogo.py               (v1.3) tuned-GKP common zero + winding number; cat
+                             quadratic-floor scaling fit (Sec. VI, Supplement S6)
+verify_nogo2.py              (v1.3) two-tone sine meter zeros on the cat leg basis (Sec. VI)
 data/                        saved outputs (JSON) — regenerate with the commands below
 ```
 
@@ -87,7 +98,20 @@ python -u one_r.py 1.35
 
 # The figure:
 python fig1.py                      # -> readability_fig1.pdf
+
+# v1.3 additions (revision of 2026-10-06). Each writes its JSON next to the
+# script; shipped copies are in data/.
+python -u e1_flux_decomposition.py all     # ~1 min; run before e1c
+python -u e1c_leff.py                      # seconds; reads data/gamma_sweep_results.json
+python -u e2_gkpq_convergence.py           # N = 80 90 100 110, ~4 min per N
+python -u e3_block_identities.py           # seconds; prints ALL PASS
+python -u verify_nogo.py                   # minutes; reads data/nogo_results.json
+python -u verify_nogo2.py                  # minutes
 ```
+
+Table numbering changed in the 2026-10-06 revision: the verification grid
+(`tab:bound`, called "Table II" elsewhere in this README) is now **Table III**,
+and the new flux-identity table is Table II.
 
 ## Reproduction status
 
@@ -107,6 +131,17 @@ The dense-eigensolve paths (`autocorr_extract_d3fix.py`, `perception_step3.py`,
 minutes to hours per cell and `round10_stageA.py` has the memory caveat noted
 above.
 
+### v1.3 reproduction check (2026-10-06)
+
+All six v1.3 scripts were run from a clean copy of this repository (Python 3.13,
+qutip 5.3.0). `e1_flux_decomposition.py` (300 numeric fields), `e1c_leff.py`
+(132) and `e2_gkpq_convergence.py` at N = 80 (47) reproduce the shipped outputs
+bit-for-bit. `e3_block_identities.py` prints ALL PASS. `verify_nogo.py` and
+`verify_nogo2.py` reproduce every quantity the paper quotes (zero locations,
+winding numbers, badness floors, fit exponents); their remaining differences
+from a July 2026 run are at machine precision (~1e-16) or are equally optimal
+parameters returned by a local optimizer in the V-floored meter search.
+
 ## Notes
 - `qutip==5.3.0` is the version used for the paper; other 5.x releases should work
   but were not validated. The bit-identical re-run above used numpy 2.2.6 and
@@ -121,7 +156,8 @@ above.
   conservative, as stated in the paper.
 - `lemma_A_validation.py` is an independent, self-contained 4-level model. It
   confirms the *structure* of Appendix C/D: the within-code windowed rate equals
-  2*gamma*kappa^2 exactly (not the spectral eigenvalue), the leak-term flux
+  2*gamma*kappa^2 up to the window deficit of the paper's Eq. (A2) (not the
+  spectral eigenvalue), the leak-term flux
   identity holds (to ~9% in this simplified model), which-path back-action gives
   no leading self-damage (residual O(gamma/g)), the slope stays bounded as g
   grows (no Zeno), and the block bounds hold. It is a structural check, not a
@@ -131,6 +167,12 @@ above.
 MIT (see LICENSE).
 
 ## Corrections
+
+- **Revision of 2026-10-06 (v1.3).** No shipped number changed. The scripts
+  above were added so that the manuscript's new Sec. III.A, Table II, the GKP-q
+  convergence statement and Supplement S6 can be reproduced. Two of them were
+  developed against a different directory layout; their input paths were
+  changed to `data/` for this release, with no change to any computation.
 
 - **Normalization fix, 2026-08-20.** `autocorr_rates_fixed` previously divided
   the windowed slope by `C(0)` rather than `C(t)`, returning the raw derivative
